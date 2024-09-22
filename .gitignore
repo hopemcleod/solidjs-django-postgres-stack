@@ -1,0 +1,61 @@
+
+dist
+.solid
+.output
+.vercel
+.netlify
+.vinxi
+
+# Environment
+.env
+.env*.local
+
+# dependencies
+/node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+*.launch
+.settings/
+
+# Temp
+gitignore
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.eggs/
+*.venv/
+*.env
+.env.local
+.env.*.local
+*.DS_Store
+
+# Django
+*.log
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+static/
+# Your settings module can be ignored if it contains sensitive information
+# myproject/settings.py
+
+# Migrations
+/patients/migrations/*.py
+/patients/migrations/*.pyc
+/patients/migrations/__pycache__/
+
+# custom
+temp/
+env/
+

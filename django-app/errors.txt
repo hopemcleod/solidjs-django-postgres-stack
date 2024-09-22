@@ -1,0 +1,44 @@
+When I run the makemigrations command I get the following error:
+django.core.exceptions.ImproperlyConfigured: Error loading psycopg2 or psycopg module
+
+ChatGPT said:
+ChatGPT
+The error you're encountering, django.core.exceptions.ImproperlyConfigured: Error loading psycopg2 or psycopg module, means that Django is unable to find the PostgreSQL adapter needed to connect to the PostgreSQL database. This adapter is required to allow Django to communicate with the PostgreSQL database.
+
+Solution:
+Django needs a PostgreSQL driver, and psycopg2 (or its successor psycopg) is the most commonly used.
+
+I had trouble installing psycopg postgresql driver that django needs. It needed other libraries. I instead installed the binary 
+pip install psycopg2-binary
+==============================================
+
+RuntimeError: Model class patients.models.Patient doesn't declare an explicit app_label and isn't in an application in INSTALLED_APPS.
+
+solution: 
+
+Neede to add the patients app to the installed apps:
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+
+    # custom apps
+    'patients',
+]
+
+==============================================
+
+django.db.utils.ProgrammingError: relation "patients_patient" does not exist
+LINE 1: ...tient"."age", "patients_patient"."diagnosis" FROM "patients_...
+
+patient table didn't exist. I ran the managemigration command again and the migrate after.
+
+I was having trouble seeing the table in pgadmin. I had to set up a server and also a network that both postgres and pgadmin both shared.
+
+==============================================
+
+wasn't accepting my network name. I had the --network flag in the wrong place in my docker run command. It needs to go before the --name flag.
