@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Patient
 
-# Register your models here.
+# Register models with the admin class
+admin.site.register(Patient)

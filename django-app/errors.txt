@@ -42,3 +42,9 @@ I was having trouble seeing the table in pgadmin. I had to set up a server and a
 ==============================================
 
 wasn't accepting my network name. I had the --network flag in the wrong place in my docker run command. It needs to go before the --name flag.
+==============================================
+
+when importing data file into postgres, .csv cannot be found
+
+solution:
+need to add the csv directly to the container or can create a volume so that the container has access to the csv file.

@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "first_name": "John",
+        "last_name": "Doe",
+        "age": 30,
+        "diagnosis": "nslbp"
+    },
+    {
+        "id": 2,
+        "first_name": "Jane",
+        "last_name": "Smith",
+        "age": 25,
+        "diagnosis": "frozen shoulder"
+    },
+    {
+        "id": 3,
+        "first_name": "Bob",
+        "last_name": "Brown",
+        "age": 40,
+        "diagnosis": "chondromalacia patellae"
+    },
+    {
+        "id": 4,
+        "first_name": "Alice",
+        "last_name": "Johnson",
+        "age": 28,
+        "diagnosis": "lateral epicondylitis"
+    },
+    {
+        "id": 5,
+        "first_name": "Charlie",
+        "last_name": "Garcia",
+        "age": 35,
+        "diagnosis": "gastrocnemius strain"
+    }
+]

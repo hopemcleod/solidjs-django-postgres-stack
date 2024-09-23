@@ -1,85 +1,224 @@
-docker run --name patient-postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=p@ssw0rd -e POSTGRES_DB=patients -p 5432:5432 -d postgres
+Environment: Windows 11
 
-Steps to Set Up PostgreSQL and Migrations:
-1. Set Up PostgreSQL (Docker Option)
-If you're running PostgreSQL in a Docker container, you can set it up using the following Docker command:
+### Summary of steps:
+* [Install Django and Set Up a New Project](#install-django-and-set-up-a-new-project)<br>
+* [Create your Django project](#create-your-django-project)<br>
+* [Install Django REST Framework](#install-django-rest-framework)<br>
+* [Configure Django Settings](#configure-django-settings)<br>
+* [Create the Patients App](#create-the-patients-app)<br>
+* [Create the Patient Model](#create-the-patient-model)<br>
+* [Create and Apply Migrations](#create-and-apply-migrations)<br>
+* [Add data to the database](#add-data-to-the-database)<br>
+* [Create a Serializer](#create-a-serializer)<br>
+* [Create a View for the API](#create-a-view-for-the-api)<br>
+* [Set Up URL Routing](#set-up-url-routing)<br>
+* [Test the API](#test-the-api)<br>
+* [Set Up Admin Panel (Optional)](#set-up-admin-panel-optional)<br>
 
-bash
-Copy code
-docker run --name my-postgres -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydatabase -p 5432:5432 -d postgres
-myuser, mypassword, and mydatabase are your custom database username, password, and database name.
-This will spin up a PostgreSQL instance on port 5432.
+### Steps to Create a Django API:
+#### Install Django and Set Up a New Project
+With Python installed, setup a virtual environment, activate it and install Django:
 
-2. Configure Django to Use PostgreSQL
-Update your DATABASES setting in settings.py to point to your PostgreSQL database:
-
-python
-Copy code
-# patients_api/settings.py
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydatabase',  # your PostgreSQL database name
-        'USER': 'myuser',      # your PostgreSQL username
-        'PASSWORD': 'mypassword',  # your PostgreSQL password
-        'HOST': 'localhost',   # or '127.0.0.1' if running locally
-        'PORT': '5432',        # PostgreSQL default port
-    }
-}
-3. Apply Migrations
-Once PostgreSQL is running and Django is configured, you can run the migrations to create the necessary tables in the database:
-
-bash
-Copy code
-python manage.py makemigrations
-python manage.py migrate
-This will apply the migrations and create the tables for your models (including the Patient model) in the PostgreSQL database.
-makemigrations only creates the instructions for changing the database.
-It doesn't apply these changes to your database.
-
-4. Verify the Connection
-You can verify that Django is connected to PostgreSQL by running the following:
-
-python manage.py dbshell - I'm using docker so can go to the command line inside the container.
-
-If successful, this will open a connection to the PostgreSQL database via Django. You can run SQL queries here to confirm the tables were created.
-
-
-Using pgAdmin for the postgresql ui
-pgAdmin:
-
-This is the most popular and feature-rich open-source administration and development platform for PostgreSQL.
-It can be run as a separate Docker container, making it easy to connect to your PostgreSQL container.
-1) I can set up a docker-compose:
-
-```yaml
-version: '3'
-   services:
-     postgres:
-       image: postgres:latest
-       environment:
-         POSTGRES_PASSWORD: yourpassword
-       ports:
-         - "5432:5432"
-
-     pgadmin:
-       image: dpage/pgadmin4
-       environment:
-         PGADMIN_DEFAULT_EMAIL: user@domain.com
-         PGADMIN_DEFAULT_PASSWORD: pgadminpassword
-       ports:
-         - "80:80"
-       depends_on:
-         - postgres
+```bash
+python -m venv env
+env\Scripts\activate
+```
+Then, install Django:
 
 ```
+pip install django
+```
+#### Create your Django project
 
-OR
+```bash
+django-admin startproject patients_api
+cd patients_api
+```
 
-2) Just run a single command and start the container using docker desktop:
-docker run --name pgadmin4 -e PGADMIN_DEFAULT_EMAIL=hope-dev@outlook.com -e PGADMIN_DEFAULT_PASSWORD=p@ssw0rd -p 8080:80 -d dpage/pgadmin4
+This creates the basic Django project structure.
 
-update for both postgres and pgadmin - add network flag
+#### Install Django REST Framework
+Since building an API, install Django REST Framework (DRF), making building REST APIs more simple.
+
+```bash
+pip install djangorestframework
+```
+
+#### Configure Django Settings
+Open the settings.py file inside the patients_api folder and add 'rest_framework' to the INSTALLED_APPS list:
+
+```python
+INSTALLED_APPS = [
+    # Other installed apps
+    'rest_framework',
+]
+```
+
+#### Create the Patients App
+Create a Django app that will handle your patient-related functionality:
+
+```python
+python manage.py startapp patients
+```
+
+Add 'patients' to the INSTALLED_APPS list in settings.py so that Django knows about it:
+
+```python
+INSTALLED_APPS = [
+  .
+  .
+  .
+    'rest_framework',
+
+    # custom apps
+    'patients',
+]
+```
+
+#### Create the Patient Model
+In the ```patients/models.py file```, define a simple Patient model with some basic fields:
+
+```python
+from django.db import models
+
+class Patient(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    age = models.IntegerField()
+    diagnosis = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
+```
+#### Create and Apply Migrations
+Continue if have a PostgreSQL database running. Otherwise jump to [Running PostgreSQl in a Docker container](#running-postgresql-in-a-docker-container) to setup the database.
+
+Run the following commands to create a migration file:
+```bash
+python manage.py makemigrations
+```
+
+Now run the migrations to apply the changes to the database:
+```bash
+python manage.py migrate
+```
+
+#### Add data to the database
+Can access the database vi pgadmin at http://localhost:8080/
+Can create a volume i.e. specify a location that the container has permission to access
+
+```bash
+docker run --network local-network --name patient-postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=p@ssw0rd -e POSTGRES_DB=patients -p 5432:5432 -d postgres -v <file-path>
+```
+
+or
+ copy the file directly onto the container e.g.
+
+ ```bash
+ docker cp <local-file-path> <docker-name>:/<filename>
+ ```
+
+ or add data via Django admin - see [Set Up Admin Panel](#set-up-admin-panel-optional)
+
+ or create a csv/json file and import directly into PostgreSQL
+
+
+#### Create a Serializer
+To convert the Patient model data into JSON format (for the API), create a serializer in ```patients/serializers.py```:
+
+```python
+from rest_framework import serializers
+from .models import Patient
+
+class PatientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = '__all__'
+```
+
+#### Create a View for the API
+In ```patients/views.py```, define an API view that returns a list of patients:
+
+```python
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .models import Patient
+from .serializers import PatientSerializer
+
+@api_view(['GET'])
+def get_patients(request):
+    patients = Patient.objects.all()
+    serializer = PatientSerializer(patients, many=True)
+    return Response(serializer.data)
+```  
+   
+#### Set Up URL Routing
+In ```patients/urls.py```, define a URL pattern for the get_patients API:
+
+```python
+from django.urls import path
+from .views import get_patients
+
+urlpatterns = [
+    path('patients/', get_patients, name='get_patients'),
+]
+```
+
+Next, include this in your main ```patients_api/urls.py``` file:
+
+```python
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('patients.urls')),
+]
+```
+
+#### Test the API
+Run the Django development server:
+
+```bash
+python manage.py runserver
+```
+
+Now, can visit http://127.0.0.1:8000/api/patients/ in the browser, and it should return a JSON response with a list of patients (tassuming patient data exists in the database).
+
+#### Set Up Admin Panel (Optional)
+You can add patient records via the Django admin panel:
+
+Create a superuser:
+
+C```python manage.py createsuperuser```
+
+e.g. can use following for local use:
+```
+Username: admin
+Email: admin@admin.com
+password: p@ssw0rd
+```
+
+Register the Patient model in ```patients/admin.py```:
+
+```python
+from django.contrib import admin
+from .models import Patient
+
+admin.site.register(Patient)
+```
+Visit http://127.0.0.1:8000/admin (or http://localhost:8000/admin) to access the admin panel.
+
+===========================================
+
+### Running PostgreSQl in a Docker container
+#### Install Docker Desktop
+Go to the Docker Desktop website and download the installer for your operating system - https://www.docker.com/products/docker-desktop/
+
+#### Create container to run PostgreSQL
 docker run --network local-network --name patient-postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=p@ssw0rd -e POSTGRES_DB=patients -p 5432:5432 -d postgres
-docker run --network local-network --name pgadmin4 -e PGADMIN_DEFAULT_EMAIL=hope-dev@outlook.com -e PGADMIN_DEFAULT_PASSWORD=p@ssw0rd -p 8080:80 -d dpage/pgadmin4
+
+#### Create a container for the PostgreSQl UI (pgadmin)
+docker run --network local-network --name patient-postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=p@ssw0rd -e POSTGRES_DB=patients -p 5432:5432 -d postgres -d postgres
+
