@@ -14,6 +14,8 @@ Environment: Windows 11
 * [Set Up URL Routing](#set-up-url-routing)<br>
 * [Test the API](#test-the-api)<br>
 * [Set Up Admin Panel (Optional)](#set-up-admin-panel-optional)<br>
+* [Useful commands](#useful-commands)<br>
+* [Enable CORS](#enable-cors)<br>
 
 ### Steps to Create a Django API:
 #### Install Django and Set Up a New Project
@@ -191,7 +193,7 @@ You can add patient records via the Django admin panel:
 
 Create a superuser:
 
-C```python manage.py createsuperuser```
+```python manage.py createsuperuser```
 
 e.g. can use following for local use:
 ```
@@ -222,3 +224,31 @@ docker run --network local-network --name patient-postgres -e POSTGRES_USER=admi
 #### Create a container for the PostgreSQl UI (pgadmin)
 docker run --network local-network --name patient-postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=p@ssw0rd -e POSTGRES_DB=patients -p 5432:5432 -d postgres -d postgres
 
+#### Enable CORS
+So that the frontend (e.g. localhost:3000) can talk to this backend on localhost:8000 need to enable CORS:
+
+```pip install django-cors-headers```
+
+update ```settings.py``` by adding ```corsheaders``` to INSTALLED_APPS
+
+Add middleware for CORS:
+```python
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    # other middleware
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # SolidJS frontend
+]
+```
+
+#### Useful Commands
+```python
+python manage.py startapp <app name>
+python manage.py runserver
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+```

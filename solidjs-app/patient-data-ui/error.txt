@@ -1,0 +1,22 @@
+CORS error localhost:3000 not allowed to talk to localhost:8000 i.e.
+localhost/:1 Access to fetch at 'http://localhost:8000/api/patients/' from origin 'http://localhost:3000' 
+has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. 
+If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+
+Solution:
+need to configure the Django backend to allow requests from the SolidJS frontend
+```pip install django-cors-headers```
+update ```settings.py``` by adding ```corsheaders``` to INSTALLED_APPS
+
+Add middleware for CORS:
+```python
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    # other middleware
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # SolidJS frontend
+]
+```

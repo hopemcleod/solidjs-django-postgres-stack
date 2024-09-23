@@ -22,6 +22,8 @@ npm run dev
 # or start the server and open the app in a new browser tab
 npm run dev -- --open
 ```
+## Debug the app
+Once have server running, press F5 in VS Code
 
 ## Building
 
@@ -30,3 +32,12 @@ Solid apps are built with _presets_, which optimise your project for deployment 
 By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different preset, add it to the `devDependencies` in `package.json` and specify in your `app.config.js`.
 
 ## This project was created with the [Solid CLI](https://solid-cli.netlify.app)
+
+##  About the application
+NB: Can also create a Solid Start framework project that uses TypeScript by default by running:
+```npx degit solidjs/templates/start```
+
+##  About the application
+
+Nice tutorial:
+https://www.youtube.com/playlist?list=PL4cUxeGkcC9gU_GvFygZFu0aBysPilkbB

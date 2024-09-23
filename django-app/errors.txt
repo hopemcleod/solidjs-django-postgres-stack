@@ -48,3 +48,22 @@ when importing data file into postgres, .csv cannot be found
 
 solution:
 need to add the csv directly to the container or can create a volume so that the container has access to the csv file.
+
+=======================================
+
+CORS not enabled
+```pip install django-cors-headers```
+update ```settings.py``` by adding ```corsheaders``` to INSTALLED_APPS
+
+Add middleware for CORS:
+```python
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    # other middleware
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # SolidJS frontend
+]
+```
